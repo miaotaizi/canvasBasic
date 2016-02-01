@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>小球坠落物理效果</title>
+</head>
+<body>
+<canvas id="canvas" style="display: block; border: 1px solid #666; margin: 0 auto"></canvas>
+<script>
+    var ball = {
+        x: 512,                 //圆球圆心x坐标起始位置
+        y: 100,                 //圆球圆心y坐标起始位置
+        r: 20,                  //圆球半径
+        g: 1,                   //重力加速度
+        rub: 0.3,               //空气摩擦系数
+        vx: -4,                 //x轴方向初始速度
+        vy: 0,                  //y中方向初始速度
+        color: '#005588'        //圆球颜色
+    };
+    window.onload = function(){
+        var canvas = document.getElementById('canvas'),
+            context = canvas.getContext('2d');
+        canvas.width = 1024;
+        canvas.height = 768;
+
+        setInterval(function(){
+            render(context);
+            update(canvas);
+        }, 20);
+    }
+
+    function update(canvas){
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+        ball.vy += ball.g;
+
+        /**
+         * 画布底部 碰撞检测
+         * 如果 圆球中心Y坐标 大于画布高度减去圆球半径, 则为碰撞
+         * 重置圆球中心Y坐标到 画布高度减去圆球半径 位置
+         * 并且设置y方向速度为负值, 并且扣除摩擦系数rub中的速度
+         */
+        if(ball.y >= canvas.height - ball.r) {
+            ball.y = canvas.height - ball.r;
+            ball.vy = - ball.vy * (1 - ball.rub);
+        }
+    }
+
+    function render(cxt) {
+        cxt.clearRect(0, 0, cxt.canvas.width, cxt.canvas.height);
+        cxt.fillStyle = ball.color;
+        cxt.beginPath();
+        cxt.arc(ball.x, ball.y, ball.r, 0 , 2*Math.PI);
+        cxt.closePath();
+        cxt.fill();
+    }
+</script>
+</body>
+</html>
